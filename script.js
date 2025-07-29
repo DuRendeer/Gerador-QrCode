@@ -18,7 +18,6 @@ class QRCodeGenerator {
         });
         this.downloadBtn.addEventListener('click', () => this.downloadQR());
         
-        // Mostra placeholder inicial
         this.showPlaceholder();
     }
 
@@ -41,7 +40,6 @@ class QRCodeGenerator {
 
     isValidUrl(string) {
         try {
-            // Se não começar com protocolo, adiciona http://
             if (!string.match(/^https?:\/\//)) {
                 string = 'http://' + string;
             }
@@ -69,34 +67,26 @@ class QRCodeGenerator {
         this.showLoading();
 
         try {
-            // Usando API do QR Server (gratuita e confiável)
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(validUrl)}`;
             
-            // Criar imagem
             const img = new Image();
             img.crossOrigin = 'anonymous';
             
             img.onload = () => {
-                // Criar canvas
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 
-                // Definir tamanho do canvas
                 canvas.width = 300;
                 canvas.height = 300;
                 
-                // Desenhar a imagem no canvas
                 ctx.drawImage(img, 0, 0, 300, 300);
                 
-                // Limpar container e adicionar canvas
                 this.qrContainer.innerHTML = '';
                 this.qrContainer.appendChild(canvas);
                 this.qrContainer.classList.add('has-qr');
                 
-                // Salvar referência do canvas para download
                 this.currentCanvas = canvas;
                 
-                // Mostrar botão de download
                 this.downloadBtn.style.display = 'block';
                 
                 this.resetButton();
@@ -122,12 +112,9 @@ class QRCodeGenerator {
         }
 
         try {
-            // Converter canvas para blob
             this.currentCanvas.toBlob((blob) => {
-                // Criar URL do blob
                 const url = URL.createObjectURL(blob);
                 
-                // Criar link temporário para download
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = `qrcode-${Date.now()}.png`;
@@ -135,7 +122,6 @@ class QRCodeGenerator {
                 a.click();
                 document.body.removeChild(a);
                 
-                // Limpar URL do blob
                 URL.revokeObjectURL(url);
             }, 'image/png');
         } catch (error) {
@@ -145,7 +131,6 @@ class QRCodeGenerator {
     }
 }
 
-// Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
     new QRCodeGenerator();
 });
